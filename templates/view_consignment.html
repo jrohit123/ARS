@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Consignment {{ entry.consignment_no }} — ARS{% endblock %}
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  Consignment saved successfully! {% if entry.email_sent %}PDF has been emailed to {{ entry.consignor_email }}.{% else %}Email could not be sent — check SMTP settings.{% endif %}
+</div>
+{% endif %}
+
+{% if email_result == 'success' %}
+<div class="alert alert-success">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  Email sent successfully to {{ entry.consignor_email }}!
+</div>
+{% elif email_result == 'failed' %}
+<div class="alert alert-error">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  Failed to send email. Check SMTP settings and consignor email.
+</div>
+{% elif email_result == 'no_email' %}
+<div class="alert alert-error">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  No email address on file for this consignment.
+</div>
+{% endif %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Consignment #{{ entry.consignment_no }}</h1>
+    <p class="page-sub">{{ entry.date | display_date }} &nbsp;·&nbsp; Created by {{ entry.staff_name }}</p>
+  </div>
+  <div style="display:flex; gap:10px;">
+    <a href="/dashboard" class="btn btn-outline">← Back</a>
+    <a href="/consignment/{{ entry.id }}/pdf" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download PDF
+    </a>
+  </div>
+</div>
+
+<div class="detail-grid">
+
+  <div class="detail-card">
+    <div class="detail-section-title">Consignment Identity</div>
+    <div class="detail-row"><span>Consignment No.</span><strong>{{ entry.consignment_no }}</strong></div>
+    <div class="detail-row"><span>Date</span><strong>{{ entry.date | display_date }}</strong></div>
+    <div class="detail-row"><span>Delivery Type</span><strong>{{ entry.delivery_type }}</strong></div>
+    <div class="detail-row"><span>E-Way Bill</span><strong>{{ entry.eway_bill_no or '—' }}</strong></div>
+    <div class="detail-row"><span>E-Way Expiry</span><strong>{{ entry.eway_bill_expiry | display_date }}</strong></div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-section-title">Route & Vehicle</div>
+    <div class="detail-row"><span>From</span><strong>{{ entry.from_location or '—' }}</strong></div>
+    <div class="detail-row"><span>To</span><strong>{{ entry.to_location or '—' }}</strong></div>
+    <div class="detail-row"><span>Truck No.</span><strong>{{ entry.truck_no or '—' }}</strong></div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-section-title">Consignor (Sender)</div>
+    <div class="detail-row"><span>Name</span><strong>{{ entry.consignor_name }}</strong></div>
+    <div class="detail-row"><span>Email</span><strong>{{ entry.consignor_email }}</strong></div>
+    <div class="detail-row"><span>Address</span><strong>{{ entry.consignor_address or '—' }}</strong></div>
+    <div class="detail-row">
+      <span>Email Status</span>
+      {% if entry.email_sent %}
+      <span class="badge badge-green">Sent ✓</span>
+      {% else %}
+      <span class="badge badge-grey">Not Sent</span>
+      {% endif %}
+    </div>
+    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+      <form method="POST" action="/consignment/{{ entry.id }}/resend-email" style="display: inline;">
+        <button type="submit" class="btn btn-sm btn-outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36"/></svg>
+          Resend Email
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-section-title">Consignee (Receiver)</div>
+    <div class="detail-row"><span>Name</span><strong>{{ entry.consignee_name }}</strong></div>
+    <div class="detail-row"><span>Address</span><strong>{{ entry.consignee_address or '—' }}</strong></div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-section-title">Goods</div>
+    <div class="detail-row"><span>Description</span><strong>{{ entry.description or '—' }}</strong></div>
+    <div class="detail-row"><span>Packages</span><strong>{{ entry.no_of_packages }}</strong></div>
+    <div class="detail-row"><span>Actual Weight</span><strong>{{ entry.actual_weight or '—' }}</strong></div>
+    <div class="detail-row"><span>Charged Weight</span><strong>{{ entry.charged_weight or '—' }}</strong></div>
+    <div class="detail-row"><span>Goods Value</span><strong>Rs. {{ entry.goods_value }}</strong></div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-section-title">Invoice</div>
+    <div class="detail-row"><span>Invoice No.</span><strong>{{ entry.invoice_no or '—' }}</strong></div>
+    <div class="detail-row"><span>Invoice Date</span><strong>{{ entry.invoice_date | display_date }}</strong></div>
+    <div class="detail-row"><span>GST No.</span><strong>{{ entry.invoice_gst_no or '—' }}</strong></div>
+    <div class="detail-row"><span>Per</span><strong>{{ entry.invoice_per or '—' }}</strong></div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-section-title">Charges</div>
+    <div class="detail-row"><span>Rate</span><strong>{{ entry.freight_rate }}</strong></div>
+    <div class="detail-row"><span>Freight</span><strong>Rs. {{ entry.freight_amount }}</strong></div>
+    <div class="detail-row"><span>Hamali</span><strong>Rs. {{ entry.hamali }}</strong></div>
+    <div class="detail-row"><span>GST ({{ entry.gst_percent }}%)</span><strong>Rs. {{ entry.gst_amount }}</strong></div>
+    <div class="detail-row"><span>St. Charge</span><strong>Rs. {{ entry.st_charge }}</strong></div>
+    <div class="detail-row total-highlight"><span>TOTAL</span><strong>Rs. {{ entry.total_amount }}</strong></div>
+  </div>
+
+</div>
+{% endblock %}

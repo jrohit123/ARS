@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Login — ARS Consignment{% endblock %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-mark">ARS</div>
+      <div class="auth-brand">
+        <div class="auth-brand-name">AGGARWAL ROUTEMASTER</div>
+        <div class="auth-brand-sub">CONSIGNMENT MANAGEMENT SYSTEM</div>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/login" class="auth-form">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-input" placeholder="Enter username" required autofocus>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-input" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        Sign In
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Since 1995 &nbsp;·&nbsp; ISO 9001:2015 Certified &nbsp;·&nbsp; Vasai (E), Maharashtra</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

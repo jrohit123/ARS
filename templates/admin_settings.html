@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Settings — ARS Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">System Settings</h1>
+    <p class="page-sub">Configure SMTP email and company details</p>
+  </div>
+  <a href="/admin/users" class="btn btn-outline">← Users</a>
+</div>
+
+{% if success %}<div class="alert alert-success">{{ success }}</div>{% endif %}
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<form method="POST" action="/admin/settings">
+
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">1</span> Company Details
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Company Name</label>
+        <input type="text" name="company_name" class="form-input" value="{{ settings.get('company_name', 'Aggarwal Routemaster Services Pvt. Ltd.') }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">GSTIN</label>
+        <input type="text" name="company_gstin" class="form-input" value="{{ settings.get('company_gstin', '') }}" placeholder="27AATCA9935G1Z1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input type="text" name="company_phone" class="form-input" value="{{ settings.get('company_phone', '') }}" placeholder="9623364953">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">2</span> Email (SMTP) Settings
+    </div>
+    <div class="info-box">
+      <strong>Gmail setup:</strong> Use smtp.gmail.com, port 587. For password, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">App Password</a> (not your regular Gmail password).
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="form-group">
+        <label class="form-label">SMTP Host</label>
+        <input type="text" name="smtp_host" class="form-input" value="{{ settings.get('smtp_host', '') }}" placeholder="smtp.gmail.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">SMTP Port</label>
+        <input type="number" name="smtp_port" class="form-input" value="{{ settings.get('smtp_port', '587') }}" placeholder="587">
+      </div>
+      <div class="form-group">
+        <label class="form-label">SMTP Username (Email)</label>
+        <input type="email" name="smtp_user" class="form-input" value="{{ settings.get('smtp_user', '') }}" placeholder="yourname@gmail.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">SMTP Password / App Password</label>
+        <input type="password" name="smtp_password" class="form-input" value="{{ settings.get('smtp_password', '') }}" placeholder="App password">
+      </div>
+      <div class="form-group">
+        <label class="form-label">From Name (shown to recipient)</label>
+        <input type="text" name="smtp_from_name" class="form-input" value="{{ settings.get('smtp_from_name', 'ARS Consignment System') }}" placeholder="ARS Consignment System">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary btn-lg">Save Settings</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% block title %}New Consignment — ARS{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">New Consignment Entry</h1>
+    <p class="page-sub">Fill in the consignment details below</p>
+  </div>
+  <a href="/dashboard" class="btn btn-outline">← Back</a>
+</div>
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<form method="POST" action="/consignment/new" id="consignmentForm">
+  
+  <!-- Section 1: Consignment Identity -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">1</span> Consignment Details
+    </div>
+    <div class="form-grid form-grid-3">
+      <div class="form-group required">
+        <label class="form-label">Consignment No.</label>
+        <input type="text" name="consignment_no" class="form-input" value="{{ suggested_no }}" required>
+      </div>
+      <div class="form-group required">
+        <label class="form-label">Date</label>
+        <input type="date" name="date" class="form-input" value="{{ today }}" required>
+      </div>
+      <div class="form-group required">
+        <label class="form-label">Delivery Type</label>
+        <select name="delivery_type" class="form-input">
+          <option value="DD">DD (Door Delivery)</option>
+          <option value="Door Delivery">Door Delivery</option>
+          <option value="Godown Delivery">Godown Delivery</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Route -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">2</span> Route & Vehicle
+    </div>
+    <div class="form-grid form-grid-3">
+      <div class="form-group">
+        <label class="form-label">From</label>
+        <input type="text" name="from_location" class="form-input" placeholder="e.g. Bhiwandi">
+      </div>
+      <div class="form-group">
+        <label class="form-label">To</label>
+        <input type="text" name="to_location" class="form-input" placeholder="e.g. Chennai">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Truck No.</label>
+        <input type="text" name="truck_no" class="form-input" placeholder="e.g. MH04CL 2368">
+      </div>
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="form-group">
+        <label class="form-label">E-Way Bill No.</label>
+        <input type="text" name="eway_bill_no" class="form-input" placeholder="E-Way Bill number">
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-Way Bill Expiry</label>
+        <input type="date" name="eway_bill_expiry" class="form-input">
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Consignor -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">3</span> Consignor (Sender)
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="form-group required">
+        <label class="form-label">Consignor Name</label>
+        <input type="text" name="consignor_name" class="form-input" placeholder="Full name / Company name" required>
+      </div>
+      <div class="form-group required">
+        <label class="form-label">Consignor Email <span class="label-hint">(PDF will be sent here)</span></label>
+        <input type="email" name="consignor_email" class="form-input" placeholder="email@example.com" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Consignor Address</label>
+      <textarea name="consignor_address" class="form-input form-textarea" placeholder="Full address" rows="2"></textarea>
+    </div>
+  </div>
+
+  <!-- Section 4: Consignee -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">4</span> Consignee (Receiver)
+    </div>
+    <div class="form-group required">
+      <label class="form-label">Consignee Name</label>
+      <input type="text" name="consignee_name" class="form-input" placeholder="Full name / Company name" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Consignee Address</label>
+      <textarea name="consignee_address" class="form-input form-textarea" placeholder="Full address" rows="2"></textarea>
+    </div>
+  </div>
+
+  <!-- Section 5: Goods -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">5</span> Goods Description
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description of Goods</label>
+      <input type="text" name="description" class="form-input" placeholder="e.g. Express Infrastructure Connect">
+    </div>
+    <div class="form-grid form-grid-3">
+      <div class="form-group">
+        <label class="form-label">No. of Packages</label>
+        <input type="number" name="no_of_packages" class="form-input" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Actual Weight (Kg)</label>
+        <input type="text" name="actual_weight" class="form-input" placeholder="e.g. 32 feet">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Charged Weight (Kg)</label>
+        <input type="text" name="charged_weight" class="form-input" placeholder="e.g. Fixed">
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Invoice -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">6</span> Invoice Details
+    </div>
+    <div class="form-grid form-grid-3">
+      <div class="form-group">
+        <label class="form-label">Invoice No.</label>
+        <input type="text" name="invoice_no" class="form-input" placeholder="Invoice number">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Invoice Date</label>
+        <input type="date" name="invoice_date" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Per</label>
+        <input type="text" name="invoice_per" class="form-input" placeholder="e.g. Kg / Unit">
+      </div>
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="form-group">
+        <label class="form-label">GST No. (Consignor)</label>
+        <input type="text" name="invoice_gst_no" class="form-input" placeholder="GST number">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Goods Value (Rs.)</label>
+        <input type="number" name="goods_value" class="form-input" placeholder="0.00" step="0.01" min="0">
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Insurance -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">7</span> Insurance
+    </div>
+    <div class="form-group">
+      <label class="form-label">Insurance By</label>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="insurance_by" value="owner" checked onchange="toggleInsurance(this)">
+          <span>Not Insured (Owner's Risk)</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="insurance_by" value="consignor" onchange="toggleInsurance(this)">
+          <span>Insured by Consignor</span>
+        </label>
+      </div>
+    </div>
+    <div id="insuranceFields" style="display:none;">
+      <div class="form-grid form-grid-3">
+        <div class="form-group">
+          <label class="form-label">Insurance Company</label>
+          <input type="text" name="insurance_company" class="form-input" placeholder="Company name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Policy No.</label>
+          <input type="text" name="insurance_policy_no" class="form-input" placeholder="Policy number">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Insured Amount (Rs.)</label>
+          <input type="number" name="insurance_amount" class="form-input" placeholder="0.00" step="0.01">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Charges -->
+  <div class="form-card">
+    <div class="form-section-title">
+      <span class="section-num">8</span> Freight Charges
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Rate Type</label>
+        <select name="freight_rate" class="form-input">
+          <option value="Fixed">Fixed</option>
+          <option value="Per Kg">Per Kg</option>
+          <option value="Per Unit">Per Unit</option>
+          <option value="Per Trip">Per Trip</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Freight (Rs.)</label>
+        <input type="number" name="freight_amount" id="freight" class="form-input" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()">
+      </div>
+    </div>
+    <div class="form-grid form-grid-4">
+      <div class="form-group">
+        <label class="form-label">Hamali (Rs.)</label>
+        <input type="number" name="hamali" id="hamali" class="form-input" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">GST %</label>
+        <input type="number" name="gst_percent" id="gst_pct" class="form-input" placeholder="0" step="0.01" min="0" oninput="calcTotal()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">GST Amount (Rs.)</label>
+        <input type="number" name="gst_amount" id="gst_amt" class="form-input" placeholder="0.00" step="0.01" min="0" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">St. Charge (Rs.)</label>
+        <input type="number" name="st_charge" id="st_charge" class="form-input" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()">
+      </div>
+    </div>
+    <div class="total-bar">
+      <span class="total-label">TOTAL AMOUNT</span>
+      <span class="total-display">Rs. <strong id="totalDisplay">0.00</strong></span>
+      <input type="hidden" name="total_amount" id="total_amount">
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="form-actions">
+    <a href="/dashboard" class="btn btn-outline">Cancel</a>
+    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save <!-- & Send Email-->
+    </button>
+  </div>
+
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+function toggleInsurance(radio) {
+  document.getElementById('insuranceFields').style.display = 
+    radio.value === 'consignor' ? 'block' : 'none';
+}
+
+function calcTotal() {
+  const freight = parseFloat(document.getElementById('freight').value) || 0;
+  const hamali = parseFloat(document.getElementById('hamali').value) || 0;
+  const gstPct = parseFloat(document.getElementById('gst_pct').value) || 0;
+  const stCharge = parseFloat(document.getElementById('st_charge').value) || 0;
+  
+  const gstAmt = ((freight + hamali) * gstPct) / 100;
+  const total = freight + hamali + gstAmt + stCharge;
+  
+  document.getElementById('gst_amt').value = gstAmt.toFixed(2);
+  document.getElementById('total_amount').value = total.toFixed(2);
+  document.getElementById('totalDisplay').textContent = total.toFixed(2);
+}
+
+document.getElementById('consignmentForm').addEventListener('submit', function() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving'; // & Sending...
+});
+</script>
+{% endblock %}

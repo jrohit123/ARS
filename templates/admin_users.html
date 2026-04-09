@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}User Management — ARS Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">User Management</h1>
+    <p class="page-sub">Manage staff and admin accounts</p>
+  </div>
+  <a href="/admin/settings" class="btn btn-outline">⚙ Settings</a>
+</div>
+
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+{% if request.query_params.get('success') %}<div class="alert alert-success">User added successfully.</div>{% endif %}
+
+<!-- Add User Form -->
+<div class="card" style="margin-bottom:24px;">
+  <div class="card-header"><h2 class="card-title">Add New User</h2></div>
+  <div style="padding:20px;">
+    <form method="POST" action="/admin/users/add">
+      <div class="form-grid form-grid-3">
+        <div class="form-group required">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-input" required placeholder="login username">
+        </div>
+        <div class="form-group required">
+          <label class="form-label">Full Name</label>
+          <input type="text" name="full_name" class="form-input" required placeholder="Display name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-input" placeholder="email@example.com">
+        </div>
+        <div class="form-group required">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-input" required placeholder="Set password">
+        </div>
+        <div class="form-group required">
+          <label class="form-label">Role</label>
+          <select name="role" class="form-input">
+            <option value="staff">Staff / Field User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex; align-items:flex-end;">
+          <button type="submit" class="btn btn-primary btn-full">Add User</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Users Table -->
+<div class="card">
+  <div class="card-header"><h2 class="card-title">All Users ({{ users|length }})</h2></div>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td><strong>{{ user.username }}</strong></td>
+          <td>{{ user.full_name }}</td>
+          <td>{{ user.email or '—' }}</td>
+          <td><span class="badge {{ 'badge-blue' if user.role == 'admin' else 'badge-grey' }}">{{ user.role | upper }}</span></td>
+          <td><span class="badge {{ 'badge-green' if user.is_active else 'badge-red' }}">{{ 'Active' if user.is_active else 'Inactive' }}</span></td>
+          <td>{{ user.created_at | display_date }}</td>
+          <td>
+            <form method="POST" action="/admin/users/{{ user.id }}/toggle" style="display:inline;">
+              <button type="submit" class="btn-sm {{ 'btn-outline' if user.is_active else 'btn-blue' }}">
+                {{ 'Deactivate' if user.is_active else 'Activate' }}
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
